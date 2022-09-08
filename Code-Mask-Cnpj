@@ -1,0 +1,43 @@
+function TSTCnpj() {
+  var attributForm = Xrm.Page.getAttribute('NameSpace').getValue()
+  if (attributForm != null) {
+    var exp = /\-|\.|\/|\(|\)| /g
+    attributForm = attributForm.replace(exp, '')
+    if (attributForm.length == 14) {
+      var valida = new Array(6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2)
+      var a = new Number()
+      var b = new Number()
+      var c = 11
+      var digito = new Number(
+        eval(attributForm.charAt(12) + attributForm.charAt(13))
+      )
+      for (i = 0; i < valida.length; i++) {
+        a += i > 0 ? attributForm.charAt(i - 1) * valida[i] : 0
+        b += attributForm.charAt(i) * valida[i]
+      }
+      a = a % c < 2 ? 0 : c - (a % c)
+      b = b % c < 2 ? 0 : c - (b % c)
+      if (a * 10 + b != digito) {
+        alert('Número de CNPJ inválido.')
+//      alert('Invalid CNPJ Number')
+        attributForm = ''
+      } else {
+        attributForm =
+          attributForm.substr(0, 2) +
+          '.' +
+          attributForm.substr(2, 3) +
+          '.' +
+          attributForm.substr(5, 3) +
+          '/' +
+          attributForm.substr(8, 4) +
+          '-' +
+          attributForm.substr(12, 2)
+      }
+    } else {
+      alert('CNPJ fora da 14 dígitos sequenciais! Ex: 125362142362179')
+//    alert('CNPJ outside the 14 sequential digits! Ex: 125362142362179')
+      attributForm = ''
+    }
+    Xrm.Page.getAttribute('NameSpace').setValue(attributForm)
+  }
+}
